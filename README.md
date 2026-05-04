@@ -15,17 +15,20 @@ Pipeline:
 
 ---
 
-##  Project Structure
+## Project Structure
 
-├── main_notebook.ipynb # Main entry point (run everything here)
-├── model.py # BERT model wrapper and SAE Implementation
-├── trainer.py # Training + evaluation logic
-├── config.py # Configuration classes
-├── utils.py # Utility functions (device)
-├── analysis.py # statistical analysis
-├── outputs/ # Saved models (ignored in git)
-├── pyproject.toml # Dependencies
-├── uv.lock # Locked versions
+```text
+Math498-Project/
+├── notebook.ipynb          # Main entry point
+├── model.py                # BERT model wrapper + SAE implementation
+├── trainer.py              # Training and evaluation logic
+├── config.py               # Configuration classes
+├── utils.py                # Utility functions
+├── analysis.py             # Statistical analysis
+├── outputs/                # Saved models (ignored by git)
+├── pyproject.toml          # Dependencies
+└── uv.lock                 # Locked dependency versions
+```
 
 ##  Setup (Using uv - Recommended)
 
@@ -48,5 +51,5 @@ uv sync
 uv add ipykernel
 python -m ipykernel install --user --name=uv-env --display-name "Python (uv-env)"
 
-##   How to run
+## 5. How to run
 Open notebook.ipynb, then run cells sequentially
