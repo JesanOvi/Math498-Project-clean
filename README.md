@@ -1,6 +1,6 @@
 # Transformer Interpretability with BERT + SAE
 
-## 📖 Overview
+##  Overview
 
 This project combines **BERT-based text classification** with **mechanistic interpretability using Sparse Autoencoders (SAE)**.
 
@@ -15,7 +15,7 @@ Pipeline:
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ├── main_notebook.ipynb # Main entry point (run everything here)
 ├── model.py # BERT model wrapper and SAE Implementation
@@ -33,8 +33,11 @@ Pipeline:
 
 ```bash
 pip install uv
+```
+
 
 ### 2. Clone Repository
+
 git clone https://github.com/JesanOvi/Math498-Project-clean.git
 cd Math498-Project-clean.git
 
@@ -45,5 +48,5 @@ uv sync
 uv add ipykernel
 python -m ipykernel install --user --name=uv-env --display-name "Python (uv-env)"
 
-## How to run
-### Open notebook.ipynb, then run cells sequentially
+##   How to run
+Open notebook.ipynb, then run cells sequentially
