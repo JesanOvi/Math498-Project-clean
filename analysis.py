@@ -34,6 +34,10 @@ def get_top_features(importance, k=10):
     topk = torch.topk(importance, k=k)
     return topk.indices
 
+def get_bottom_features(importance, k):
+    bottomk = torch.argsort(importance)[:k]
+    return bottomk
+
 def compute_ttest(Z, Y): # Is difference statistically significant?
     labels = torch.unique(Y)
     assert len(labels) == 2, "binary only"
