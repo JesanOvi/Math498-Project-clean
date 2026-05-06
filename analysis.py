@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import ttest_ind
 from sklearn.linear_model import LogisticRegression
 import numpy as np
-
+from scipy.stats import f_oneway
 
 def get_feature_activations(sae, H_norm, device):
     sae.eval()
@@ -38,17 +38,33 @@ def get_bottom_features(importance, k):
     bottomk = torch.argsort(importance)[:k]
     return bottomk
 
-def compute_ttest(Z, Y): # Is difference statistically significant?
-    labels = torch.unique(Y)
-    assert len(labels) == 2, "binary only"
+# def compute_ttest(Z, Y): # Is difference statistically significant?
+#     labels = torch.unique(Y)
+#     assert len(labels) == 2, "binary only"
 
-    z0 = Z[Y == labels[0]]
-    z1 = Z[Y == labels[1]]
+#     z0 = Z[Y == labels[0]]
+#     z1 = Z[Y == labels[1]]
+
+#     p_values = []
+
+#     for i in range(Z.shape[1]):
+#         _, p = ttest_ind(z0[:, i], z1[:, i], equal_var=False)
+#         p_values.append(p)
+
+#     return torch.tensor(p_values)
+
+def compute_ttest(Z, Y):
+    labels = torch.unique(Y)
+
+    if len(labels) < 2:
+        raise ValueError("Need at least 2 classes")
 
     p_values = []
 
     for i in range(Z.shape[1]):
-        _, p = ttest_ind(z0[:, i], z1[:, i], equal_var=False)
+        groups = [Z[Y == label][:, i].numpy() for label in labels]
+
+        _, p = f_oneway(*groups)
         p_values.append(p)
 
     return torch.tensor(p_values)

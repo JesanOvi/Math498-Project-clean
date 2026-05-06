@@ -35,6 +35,7 @@ class InterpBert:
         self.Z = None
 
     def set_dataconfig(self,file_path = "/Users/jesanahammed/Desktop/IMDB/IMDB Dataset.csv", file_type = "csv", text_column = "review", label_column = "sentiment", max_length = 128):
+        print("Using dataset from: ", file_path)
         self.datacon = DatasetConfig(file_path, file_type, text_column, label_column, max_length)
 
     def set_modelconfig(self, model_name = "bert-base-uncased", num_labels = None):
@@ -98,6 +99,7 @@ class InterpBert:
         return len(set(a.tolist()) & set(b.tolist()))
     
     def compute_state(self, num_samples):
+        print("Analysis will be done for ", num_samples, "from test set\n")
         self.get_model_prediction(num_samples)
         self.get_sae()
         var = compute_feature_importance(self.Z, self.Y)
