@@ -13,6 +13,7 @@ from analysis import *
 from scipy.stats import spearmanr
 
 import argparse
+import os
 
 class InterpBert:
     def __init__(self):
@@ -69,8 +70,9 @@ class InterpBert:
     def fine_tune_model(self):
         self.init_model()
         self.trainer.train(self.train_loader, self.trainingcon.epochs)
-        self.trainer.plot_loss()
+        #self.trainer.plot_loss()
         self.trainer.evaluate(self.test_loader)
+        os.makedirs("outputs/models", exist_ok=True)
         self.model.save("outputs/models/bert")
         print("Model Saved at outputs/models/bert")
 
@@ -79,6 +81,13 @@ class InterpBert:
         if self.model is None:
             self.model = BERTClassifier(self.modelcon, self.device)
         self.model.load("outputs/models/bert")
+
+        self.trainer.model = self.model.model
+        self.model.model.eval()
+
+        print(self.model.model)
+        print(self.trainer.model)
+        print(self.model.model is self.trainer.model)
     
     def get_model_prediction(self, num_samples = 5000):
         self.dataset.set_format(type=None)  
