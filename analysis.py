@@ -96,14 +96,29 @@ def combine_scores(variance, p_values, regression_weights):
     return score
 
 
-def show_top_texts(feature_idx, Z, dataset, text_col, split="train", k=5):
-    values = Z[:, feature_idx]
+# def show_top_texts(feature_idx, Z, dataset, text_col, split="train", k=5):
+#     values = Z[:, feature_idx]
 
+#     top_indices = torch.topk(values, k=k).indices
+
+#     print(f"\n===== Feature {feature_idx} =====\n")
+
+#     for idx in top_indices:
+#         idx = int(idx)
+#         print(dataset[split][idx][text_col])
+#         print("---")
+
+def show_top_texts( output_file, feature_idx, Z, dataset, text_col, split="train", k=5):
+
+    values = Z[:, feature_idx]
     top_indices = torch.topk(values, k=k).indices
 
-    print(f"\n===== Feature {feature_idx} =====\n")
+    with open(output_file, "a", encoding="utf-8") as f:
+        f.write(f"\n===== Feature {feature_idx} =====\n\n")
 
-    for idx in top_indices:
-        idx = int(idx)
-        print(dataset[split][idx][text_col])
-        print("---")
+        for rank, idx in enumerate(top_indices, 1):
+            idx = int(idx)
+
+            f.write(f"[Top {rank}]\n")
+            f.write(dataset[split][idx][text_col])
+            f.write("\n" + "-"*80 + "\n")

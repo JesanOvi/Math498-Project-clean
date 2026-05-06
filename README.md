@@ -54,15 +54,13 @@ uv add ipykernel
 python -m ipykernel install --user --name=uv-env --display-name "Python (uv-env)"
 
 ### 5. How to run
-Open notebook.ipynb, then run cells sequentially, if you prefer to see the output
-Otherwise main.py provide CLI interface to run, configure various objects.
+Open notebook.ipynb, then run cells sequentially, if you prefer to see the output. Otherwise main.py provide CLI interface to run, configure various objects.
 
 Default dataset path:
 ```text
 IMDBDataset.csv
 ```
-Fine tune BERT
-Train a new model:
+Fine tune BERT, Train a new model:
 ```bash
 uv run main.py --mode train
 ```
@@ -201,7 +199,7 @@ Recommended:
 ## Author
 
 Jesan Ahammed Ovi  
-PhD Student, Human-Computer Interaction  
+PhD Student, Computer Science  
 Colorado School of Mines
 
 
