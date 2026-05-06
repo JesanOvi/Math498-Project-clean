@@ -7,9 +7,9 @@ This project combines **BERT-based text classification** with **mechanistic inte
 Pipeline:
 
 1. Load and preprocess dataset (IMDB)
-2. Train a BERT classifier
-3. Generate predictions
-4. Extract hidden representations using SAE
+2. Fine-tue a BERT classifier
+3. Generate predictions using unseen test dataset
+4. Pass same test dataset to GPT-2 and Extract hidden representations using SAE
 5. Compute feature importance
 6. Analyze top features and associated texts
 
