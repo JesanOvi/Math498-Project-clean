@@ -12,6 +12,8 @@ from analysis import *
 
 from scipy.stats import spearmanr
 
+import argparse
+
 class InterpBert:
     def __init__(self):
         self.device = get_device()
@@ -95,8 +97,8 @@ class InterpBert:
     def overlap(self, a, b):
         return len(set(a.tolist()) & set(b.tolist()))
     
-    def compute_state(self):
-        self.get_model_prediction()
+    def compute_state(self, num_samples):
+        self.get_model_prediction(num_samples)
         self.get_sae()
         var = compute_feature_importance(self.Z, self.Y)
         p_values = compute_ttest(self.Z, self.Y)
@@ -138,14 +140,107 @@ class InterpBert:
 
 
 
-def run_full_analysis():
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description="Transformer Interpretability with BERT + SAE"
+    )
+
+    parser.add_argument(
+        "--mode",
+        choices=["train", "load", "analyze", "full"],
+        default="full",
+        help="""
+        train   -> fine-tune BERT
+        load    -> load saved model
+        analyze -> run SAE analysis on saved model
+        full    -> load model + analyze
+        """
+    )
+
+    # Dataset config
+    parser.add_argument("--data", type=str,
+                        default="/Users/jesanahammed/Desktop/IMDB/IMDB Dataset.csv")
+
+    parser.add_argument("--text-col", type=str, default="review")
+    parser.add_argument("--label-col", type=str, default="sentiment")
+    parser.add_argument("--max-length", type=int, default=128)
+
+    # Model config
+    parser.add_argument("--model-name", type=str,
+                        default="bert-base-uncased")
+
+    # Training config
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--epochs", type=int, default=2)
+    parser.add_argument("--lr", type=float, default=2e-5)
+
+    # SAE config
+    parser.add_argument("--sae-model", type=str, default="gpt2")
+    parser.add_argument("--sae-release", type=str,
+                        default="gpt2-small-res-jb")
+    parser.add_argument("--sae-id", type=str,
+                        default="blocks.8.hook_resid_pre")
+    parser.add_argument("--layer", type=int, default=8)
+
+    parser.add_argument("--samples", type=int, default=5000)
+
+    return parser
+
+
+def configure_model(args):
     ob = InterpBert()
-    ob.set_all_config()
-    ob.load_saved_model()
-    ob.compute_state()
+
+    ob.set_dataconfig(
+        file_path=args.data,
+        text_column=args.text_col,
+        label_column=args.label_col,
+        max_length=args.max_length
+    )
+
+    ob.set_modelconfig(
+        model_name=args.model_name
+    )
+
+    ob.set_trainingconfig(
+        batch_size=args.batch_size,
+        epochs=args.epochs,
+        lr=args.lr
+    )
+
+    ob.set_saeconfig(
+        model_name=args.sae_model,
+        sae_release=args.sae_release,
+        sae_id=args.sae_id,
+        layer=args.layer
+    )
+
+    return ob
 
 
-run_full_analysis()
+def main():
+    parser = build_parser()
+    args = parser.parse_args()
+
+    ob = configure_model(args)
+
+    if args.mode == "train":
+        ob.fine_tune_model()
+
+    elif args.mode == "load":
+        ob.load_saved_model()
+
+    
+
+    elif args.mode == "full":
+        ob.load_saved_model()
+        ob.compute_state(num_samples=args.samples)
+
+
+if __name__ == "__main__":
+    main()
+
 
 
 
