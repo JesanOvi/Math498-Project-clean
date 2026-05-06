@@ -62,7 +62,7 @@ class InterpBert:
         self.set_saeconfig()
     
     def init_model(self):
-        self.set_all_config()
+        #self.set_all_config()
         self.model = BERTClassifier(self.modelcon, self.device)
         optimizer = AdamW(self.model.model.parameters(), lr=self.trainingcon.lr)
         self.trainer = Trainer(self.model.model, optimizer, self.device, self.datacon, self.trainingcon)
@@ -70,7 +70,7 @@ class InterpBert:
     def fine_tune_model(self):
         self.init_model()
         self.trainer.train(self.train_loader, self.trainingcon.epochs)
-        #self.trainer.plot_loss()
+        self.trainer.plot_loss()
         self.trainer.evaluate(self.test_loader)
         os.makedirs("outputs/models", exist_ok=True)
         self.model.save("outputs/models/bert")
@@ -85,8 +85,8 @@ class InterpBert:
         self.trainer.model = self.model.model
         self.model.model.eval()
 
-        print(self.model.model)
-        print(self.trainer.model)
+        # print(self.model.model)
+        # print(self.trainer.model)
         print(self.model.model is self.trainer.model)
     
     def get_model_prediction(self, num_samples = 5000):
@@ -204,6 +204,7 @@ def build_parser():
 
 def configure_model(args):
     ob = InterpBert()
+    ob.set_all_config()
 
     ob.set_dataconfig(
         file_path=args.data,
