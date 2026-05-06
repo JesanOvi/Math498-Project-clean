@@ -3,38 +3,149 @@ from config import *
 from data import *
 from model import *
 from trainer import *
-from sae import *
+
 from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 from torch.optim import AdamW
 
+from analysis import *
 
-device = get_device()
-datacon = DatasetConfig("/Users/jesanahammed/Desktop/IMDB/IMDB Dataset.csv", "csv", "review", "sentiment", 128)
-modelcon = ModelConfig("bert-base-uncased", None)
-tokenizer = BertTokenizer.from_pretrained(modelcon.model_name)
+from scipy.stats import spearmanr
 
-loader = DatasetLoader(datacon, tokenizer)
-dataset, num_labels, label_map = loader.load()
-print(num_labels)
+class InterpBert:
+    def __init__(self):
+        self.device = get_device()
+        self.datacon = None
+        self.modelcon = None
+        self.trainingcon = None
+        self.saecon = None
+        self.tokenizer = None
+        self.loader = None
+        self.dataset = None
+        self.num_labels = None
+        self.label_map = None
+        self.train_loader = None
+        self.test_loader = None
+        self.model = None
+        self.trainer = None
+        self.texts = None
+        self.Y = None
+        self.Z = None
 
-modelcon.num_labels = num_labels
+    def set_dataconfig(self,file_path = "/Users/jesanahammed/Desktop/IMDB/IMDB Dataset.csv", file_type = "csv", text_column = "review", label_column = "sentiment", max_length = 128):
+        self.datacon = DatasetConfig(file_path, file_type, text_column, label_column, max_length)
 
-trainingcon = TrainingConfig(32, 1, 2e-5)
+    def set_modelconfig(self, model_name = "bert-base-uncased", num_labels = None):
+        self.modelcon = ModelConfig(model_name, num_labels)
+        self.tokenizer = BertTokenizer.from_pretrained(self.modelcon.model_name)
+        self.loader = DatasetLoader(self.datacon, self.tokenizer)
+        self.dataset, self.num_labels, self.label_map = self.loader.load()
+        self.modelcon.num_labels = self.num_labels
 
-train_loader = DataLoader(dataset["train"], batch_size=trainingcon.batch_size)
-test_loader = DataLoader(dataset["test"], batch_size=trainingcon.batch_size)
+    def set_trainingconfig(self, batch_size = 32, epochs = 2, lr = 2e-5):
+        self.trainingcon = TrainingConfig(batch_size, epochs, lr, self.tokenizer)
+        self.train_loader = DataLoader(self.dataset["train"], batch_size=self.trainingcon.batch_size)
+        self.test_loader = DataLoader(self.dataset["test"], batch_size=self.trainingcon.batch_size)
+    
+    def set_saeconfig(self, model_name="gpt2", sae_release="gpt2-small-res-jb", sae_id="blocks.8.hook_resid_pre", layer=8, batch_size=4):
+        self.saecon = SAEConfig(model_name, sae_release, sae_id, layer, batch_size, None, self.device)
+    
+    def set_all_config(self):
+        self.device = get_device()
+        self.set_dataconfig()
+        self.set_modelconfig()
+        self.set_trainingconfig()
+        self.set_saeconfig()
+    
+    def init_model(self):
+        self.set_all_config()
+        self.model = BERTClassifier(self.modelcon, self.device)
+        optimizer = AdamW(self.model.model.parameters(), lr=self.trainingcon.lr)
+        self.trainer = Trainer(self.model.model, optimizer, self.device, self.datacon, self.trainingcon)
 
-model = BERTClassifier(modelcon, device)
-optimizer = AdamW(model.model.parameters(), lr=trainingcon.lr)
+    def fine_tune_model(self):
+        self.init_model()
+        self.trainer.train(self.train_loader, self.trainingcon.epochs)
+        self.trainer.plot_loss()
+        self.trainer.evaluate(self.test_loader)
+        self.model.save("outputs/models/bert")
+        print("Model Saved at outputs/models/bert")
 
-trainer = Trainer(model.model, optimizer, device, datacon)
+    def load_saved_model(self):
+        self.init_model()
+        if self.model is None:
+            self.model = BERTClassifier(self.modelcon, self.device)
+        self.model.load("outputs/models/bert")
+    
+    def get_model_prediction(self, num_samples = 5000):
+        self.dataset.set_format(type=None)  
+        N = num_samples
+        self.texts = self.dataset["test"][self.datacon.text_column][:N]
+        true_labels = torch.tensor(self.dataset["test"]["label"][:N])
+        self.saecon.texts = self.texts
+        print("True Lables", true_labels)
+        self.Y = self.trainer.get_bert_predictions(self.texts)
+        print("Model Predicted labels", self.Y)
+    
+    def get_sae(self):
+        saeobj = ModelWithSAE(self.saecon)
+        self.Z = saeobj.compute_sae()
+        print("Shape of SAE", self.Z.shape)
 
-trainer.train(train_loader, trainingcon.epochs)
-trainer.plot_loss()
-trainer.evaluate(test_loader)
-model.save("outputs/models/bert")
+    def overlap(self, a, b):
+        return len(set(a.tolist()) & set(b.tolist()))
+    
+    def compute_state(self):
+        self.get_model_prediction()
+        self.get_sae()
+        var = compute_feature_importance(self.Z, self.Y)
+        p_values = compute_ttest(self.Z, self.Y)
+        reg_weights = compute_logistic_importance(self.Z, self.Y)
+        significant_features = (p_values < 0.05).sum().item()
+        print(significant_features)
+        score = combine_scores(var, p_values, reg_weights)
 
+        k = 100  
+        top_var = torch.topk(var, k=k).indices
+        top_log = torch.topk(reg_weights, k=k).indices
+        top_score = torch.topk(score, k=k).indices
+        ov_var_log = self.overlap(top_var, top_log)
+        ov_var_score = self.overlap(top_var, top_score)
+        ov_log_score = self.overlap(top_log, top_score)
+        print("Top", k, "overlap between ranking method: \n")
+        print("Variance-Logistic, Variance-Score and Logistic-Score\n")
+        print(ov_var_log, ov_var_score, ov_log_score)
+
+        rho, p = spearmanr(var.numpy(), reg_weights.numpy())
+        print("Spearman Correlation between variance and logistic weights \n")
+        print(rho, p)
+
+        top_features = get_top_features(score, k=10)
+        print("Top Strong features:", top_features)
+        self.dataset.set_format(type=None) 
+        for f in top_features:
+            #print(dataset["train"].column_names)
+            show_top_texts(f, self.Z, self.dataset, text_col=self.datacon.text_column)
+
+        weak_features = get_bottom_features(score, 10)
+        print("Weak Features", weak_features)
+        self.dataset.set_format(type=None) 
+        for f in weak_features:
+            #print(dataset["train"].column_names)
+            show_top_texts(f, self.Z, self.dataset, text_col=self.datacon.text_column)
+
+
+
+
+
+def run_full_analysis():
+    ob = InterpBert()
+    ob.set_all_config()
+    ob.load_saved_model()
+    ob.compute_state()
+
+
+run_full_analysis()
 
 
 

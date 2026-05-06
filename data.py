@@ -9,7 +9,7 @@ class DatasetLoader:
         # -------------------
         # Load CSV
         # -------------------
-        dataset = load_dataset("csv", data_files=self.cfg.path)["train"]
+        dataset = load_dataset(self.cfg.type, data_files=self.cfg.path)["train"]
 
         # split
         dataset = dataset.train_test_split(test_size=0.2)
