@@ -64,7 +64,7 @@ Purpose: Interpret top and weak SAE features using real text examples
 
 ```
 strong_post.txt and weak_post.txt -- contains top 5 documents correspond to each features. This could change everytime the pipeline is run.
-combine.txt -- contians top 5 documents associate with each features for both strong and weak features, used for analysis and include in the report.
+combine.pdf -- contians top 5 documents associate with each features for both strong and weak features, used for analysis and include in the report.
 ```
 
 ### 4. Final Report
