@@ -43,8 +43,9 @@ class Trainer:
     def plot_loss(self):
         plt.plot(self.losses)
         plt.title("Training Loss")
-        #plt.savefig(path)
-        plt.show()
+        plt.savefig("Bert_loss.png")
+        #plt.show()
+        plt.close()
 
     def evaluate(self, loader):
         self.model.eval()
