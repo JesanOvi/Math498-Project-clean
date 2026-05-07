@@ -19,6 +19,7 @@ Pipeline:
 
 ```text
 Math498-Project/
+├── Math498-project.pdf     # Final report of the project
 ├── notebook.ipynb          # Main entry point
 ├── main.py                 # CLI entry point
 ├── model.py                # BERT model wrapper + SAE implementation
@@ -31,6 +32,46 @@ Math498-Project/
 ├── pyproject.toml          # Dependencies
 └── uv.lock                 # Locked dependency versions
 ```
+
+## Codebase Map
+
+### 1. BERT Classification
+Purpose: Train classifier and generate predictions
+
+```
+trainer.py -- Fine-tune BERT model, eveluation, get prediction on unseen data.
+model.py -- BERT architecture wrapper
+main.py -- Calls training pipeline (--mode train)
+```
+
+### 2. Representation Extraction (GPT-2 + SAE)
+Purpose: Extract transformer residuals and map to sparse features
+
+```
+model.py -- Loads GPT-2, SAE forward pass, Calls SAE on residual stream
+config.py -- Defines all configurations
+```
+
+### 3. Statistical Feature Analysis
+Purpose: Identify SAE features aligned with classifier behavior
+
+```
+analysis.py -- All statistical analysis e.g. Variance-based ranking, t-test, regression, score calculation
+```
+
+### 4. Qualitative Feature Interpretation
+Purpose: Interpret top and weak SAE features using real text examples
+
+```
+strong_post.txt and weak_post.txt -- contains top 5 documents correspond to each features. This could change everytime the pipeline is run.
+combine.txt -- contians top 5 documents associate with each features for both strong and weak features, used for analysis and include in the report.
+```
+
+### 4. Final Report
+ ```
+ Math498-project.pdf --  contains the entire writeup for the project.
+ ```
+
 
 ##  Setup (Using uv - Recommended)
 
