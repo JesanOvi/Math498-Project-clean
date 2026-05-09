@@ -106,9 +106,12 @@ class InterpBert:
         """
         Generate BERT predictions on held-out examples.
 
+        Args:
+        num_samples: Number of test examples to evaluate.
+
         Stores:
-            self.texts
-            self.Y
+            self.texts: Selected evaluation texts.
+            self.Y: Predicted class labels.
         """
         self.dataset.set_format(type=None)  
         N = num_samples
@@ -133,7 +136,18 @@ class InterpBert:
     def overlap(self, a, b):
         return len(set(a.tolist()) & set(b.tolist()))
     
-    def compute_state(self, num_samples):
+    def compute_state(self, num_samples) -> None:
+        """
+        Run the statistical analysis: variance-based, t test, regression.
+        Compute composite importance score.
+        find overlap between all statistical methods.
+        finally find strong and weak SAEnfeatures based on
+        composite score as well as top k=5 documnets
+        associate with each features.
+
+        Args:
+            num_samples: Number of test examples to evaluate.
+        """
         print("Analysis will be done for ", num_samples, "from test set\n")
         self.get_model_prediction(num_samples)
         self.get_sae()
@@ -202,6 +216,9 @@ class InterpBert:
 
 
 def build_parser():
+    """
+    Facilate CLI so that users can configure desire objects.
+    """
     parser = argparse.ArgumentParser(
         description="Transformer Interpretability with BERT + SAE"
     )

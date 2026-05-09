@@ -15,7 +15,17 @@ def get_feature_activations(sae, H_norm, device):
     return Z.cpu()
 
 
-def compute_feature_importance(Z, Y): # variance: Does feature differ across classes?
+def compute_feature_importance(Z: torch.Tensor, Y: torch.Tensor) -> torch.Tensor: # variance: Does feature differ across classes?
+    """
+    Compute variance-based class separability for each SAE feature.
+
+    Args:
+        Z: Document-level SAE activations [N, F]
+        Y: Predicted labels [N]
+
+    Returns:
+        Tensor of feature importance scores [F]
+    """
     unique_labels = torch.unique(Y)
 
     feature_stats = {}
