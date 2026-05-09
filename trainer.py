@@ -43,7 +43,7 @@ class Trainer:
     def plot_loss(self):
         plt.plot(self.losses)
         plt.title("Training Loss")
-        plt.savefig("Bert_loss.png")
+        plt.savefig("docs\Bert_loss.png")
         #plt.show()
         plt.close()
 

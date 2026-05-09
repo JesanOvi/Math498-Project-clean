@@ -122,3 +122,65 @@ def show_top_texts( output_file, feature_idx, Z, dataset, text_col, split="train
             f.write(f"[Top {rank}]\n")
             f.write(dataset[split][idx][text_col])
             f.write("\n" + "-"*80 + "\n")
+
+
+def p_val_histogram(p_values):
+    fig, ax = plt.subplots(figsize=(8,5))
+
+    ax.hist(p_values.numpy(), bins=100)
+    ax.axvline(0.05)
+
+    ax.set_xlabel("p-value")
+    ax.set_ylabel("Number of Features")
+    ax.set_title("Distribution of Feature Significance")
+
+    plt.tight_layout()
+    plt.savefig("docs/pvalue_histogram.png", dpi=300)
+    #plt.show()
+
+def var_log_scatter(importance, reg_weights):
+    fig, ax = plt.subplots(figsize=(8,6))
+
+    idx = np.random.choice(len(importance), 5000, replace=False)
+
+    ax.scatter(
+        importance.numpy()[idx],
+        reg_weights.numpy()[idx],
+        alpha=0.4
+    )
+
+    ax.set_xlabel("Variance-Based Importance")
+    ax.set_ylabel("Logistic Regression Weight")
+    ax.set_title("Cross-Metric Feature Alignment")
+
+    rho = 0.218
+    ax.text(
+        0.05, 0.95,
+        f"Spearman ρ = {rho:.3f}",
+        transform=ax.transAxes,
+        verticalalignment='top'
+    )
+
+    plt.tight_layout()
+    plt.savefig("docs/variance_logistic_scatter.png", dpi=300)
+    #plt.show()
+
+def ranking_overlap(values):
+    labels = [
+        "Variance-Logistic",
+        "Variance-Score",
+        "Logistic-Score"
+    ]
+
+    #values = [16, 16, 50]
+
+    fig, ax = plt.subplots(figsize=(8,5))
+    ax.bar(labels, values)
+
+    ax.set_ylabel("Top-100 Feature Overlap")
+    ax.set_title("Agreement Across Ranking Criteria")
+
+    plt.xticks(rotation=15)
+    plt.tight_layout()
+    plt.savefig("docs/ranking_overlap.png", dpi=300)
+    #plt.show()

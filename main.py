@@ -113,7 +113,9 @@ class InterpBert:
         self.get_sae()
         var = compute_feature_importance(self.Z, self.Y)
         p_values = compute_ttest(self.Z, self.Y)
+        p_val_histogram(p_values)
         reg_weights = compute_logistic_importance(self.Z, self.Y)
+        var_log_scatter(var, reg_weights)
         significant_features = (p_values < 0.05).sum().item()
         print("Number of significant features", significant_features)
         score = combine_scores(var, p_values, reg_weights)
@@ -128,7 +130,11 @@ class InterpBert:
         print("Top", k, "overlap between ranking method: \n")
         print("Variance-Logistic, Variance-Score and Logistic-Score\n")
         print(ov_var_log, ov_var_score, ov_log_score)
-
+        values = []
+        values.append(ov_var_log)
+        values.append(ov_var_score)
+        values.append(ov_log_score)
+        ranking_overlap(values)
         rho, p = spearmanr(var.numpy(), reg_weights.numpy())
         print("Spearman Correlation between variance and logistic weights \n")
         print(rho, p)
