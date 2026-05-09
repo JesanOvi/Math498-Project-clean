@@ -41,11 +41,11 @@ def compute_feature_importance(Z: torch.Tensor, Y: torch.Tensor) -> torch.Tensor
     return importance
 
 
-def get_top_features(importance, k=10):
+def get_top_features(importance: torch.Tensor, k: int = 10) -> torch.Tensor:
     topk = torch.topk(importance, k=k)
     return topk.indices
 
-def get_bottom_features(importance, k):
+def get_bottom_features(importance: torch.Tensor, k: int) -> torch.Tensor:
     bottomk = torch.argsort(importance)[:k]
     return bottomk
 
@@ -64,7 +64,7 @@ def get_bottom_features(importance, k):
 
 #     return torch.tensor(p_values)
 
-def compute_ttest(Z, Y):
+def compute_ttest(Z: torch.Tensor, Y: torch.Tensor) -> torch.Tensor:
     labels = torch.unique(Y)
 
     if len(labels) < 2:
@@ -80,7 +80,7 @@ def compute_ttest(Z, Y):
 
     return torch.tensor(p_values)
 
-def compute_logistic_importance(Z, Y): # Is feature predictive?
+def compute_logistic_importance(Z: torch.Tensor, Y: torch.Tensor) -> torch.Tensor: # Is feature predictive?
     Z_np = Z.numpy()
     Y_np = Y.numpy()
 
@@ -91,7 +91,7 @@ def compute_logistic_importance(Z, Y): # Is feature predictive?
 
     return torch.tensor(importance)
 
-def combine_scores(variance, p_values, regression_weights):
+def combine_scores(variance: torch.Tensor, p_values: torch.Tensor, regression_weights: torch.Tensor) -> torch.Tensor:
     """
     Higher score = more important feature
     """
@@ -136,7 +136,28 @@ def show_top_texts( output_file, feature_idx, Z, dataset, text_col, split="train
 
 
 
-def save_top_texts_json(output_file, feature_idx, Z, dataset, text_col, split="train", k=5):
+def save_top_texts_json(output_file: str,
+    feature_idx: int,
+    Z: torch.Tensor,
+    dataset,
+    text_col: str,
+    split: str = "train",
+    k: int = 5) -> None:
+
+    """
+    Save the top-k highest activating documents for a given SAE feature.
+
+    Args:
+        output_file: Path to JSON output file.
+        feature_idx: SAE feature index.
+        Z: Document-level SAE activations [N, F].
+        dataset: HuggingFace dataset object.
+        text_col: Name of text column.
+        split: Dataset split to inspect.
+        k: Number of top examples to save.
+    """
+
+
     values = Z[:, feature_idx]
     top = torch.topk(values, k=k)
 
