@@ -19,7 +19,7 @@ Pipeline:
 
 ```text
 Math498-Project/
-├── doc                     
+├── docs                     
       ├── Writeup.pdf           # Final report of the project
       ├── Math498-Project.zip   # Overleaf Project of the writeup
 ├── notebook.ipynb              # Main entry point
@@ -34,7 +34,7 @@ Math498-Project/
 ├── top_posts
       ├── strong_features.json  # contains top 5 documents correspond to each strong features 
       ├── weak_features.json    # contains top 5 documents correspond to each weak features 
-      ├── combine.pdf           # contains documents associate with strong and weak features, used to conduct the qualitative analysis.
+      ├── qualitative_analysis_posts.pdf           # contains documents associate with strong and weak features, used to conduct the qualitative analysis.
 ├── graphs                      # contains all the graphs generated while executing the entire pipeline
 ├── config.py                   # Configuration classes
 ├── utils.py                    # Utility functions
