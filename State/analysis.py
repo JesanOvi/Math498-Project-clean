@@ -187,7 +187,14 @@ def save_top_texts_json(output_file: str,
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(all_data, f, indent=2, ensure_ascii=False)
 
-def p_val_histogram(p_values):
+def p_val_histogram(p_values: torch.Tensor) -> None:
+
+    """
+    Plot distribution of p-values across SAE features.
+
+    Args:
+        p_values: Feature-level p-values.
+    """
     fig, ax = plt.subplots(figsize=(8,5))
 
     ax.hist(p_values.numpy(), bins=100)
@@ -201,7 +208,16 @@ def p_val_histogram(p_values):
     plt.savefig("graphs/pvalue_histogram.png", dpi=300)
     #plt.show()
 
-def var_log_scatter(importance, reg_weights):
+def var_log_scatter(importance: torch.Tensor, reg_weights: torch.Tensor, rho: float) -> None:
+    """
+    Plot relationship between variance-based importance
+    and logistic regression weights.
+
+    Args:
+        importance: Variance-based feature scores.
+        reg_weights: Logistic regression coefficients.
+        rho: Spearman correlation coefficient.
+    """
     fig, ax = plt.subplots(figsize=(8,6))
 
     idx = np.random.choice(len(importance), 5000, replace=False)
@@ -216,7 +232,7 @@ def var_log_scatter(importance, reg_weights):
     ax.set_ylabel("Logistic Regression Weight")
     ax.set_title("Cross-Metric Feature Alignment")
 
-    rho = 0.218
+    #rho = 0.218
     ax.text(
         0.05, 0.95,
         f"Spearman ρ = {rho:.3f}",
@@ -228,7 +244,13 @@ def var_log_scatter(importance, reg_weights):
     plt.savefig("graphs/variance_logistic_scatter.png", dpi=300)
     #plt.show()
 
-def ranking_overlap(values):
+def ranking_overlap(values: list[int]) -> None:
+    """
+    Plot overlap among top-ranked SAE features.
+
+    Args:
+        values: Pairwise overlap counts.
+    """
     labels = [
         "Variance-Logistic",
         "Variance-Score",

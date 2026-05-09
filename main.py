@@ -155,7 +155,7 @@ class InterpBert:
         p_values = compute_ttest(self.Z, self.Y)
         p_val_histogram(p_values)
         reg_weights = compute_logistic_importance(self.Z, self.Y)
-        var_log_scatter(var, reg_weights)
+        #var_log_scatter(var, reg_weights)
         significant_features = (p_values < 0.05).sum().item()
         print("Number of significant features", significant_features)
         score = combine_scores(var, p_values, reg_weights)
@@ -178,7 +178,7 @@ class InterpBert:
         rho, p = spearmanr(var.numpy(), reg_weights.numpy())
         print("Spearman Correlation between variance and logistic weights \n")
         print(rho, p)
-
+        var_log_scatter(var, reg_weights, rho)
         top_features = get_top_features(score, k=10)
         print("Top Strong features:", top_features)
         self.dataset.set_format(type=None) 
