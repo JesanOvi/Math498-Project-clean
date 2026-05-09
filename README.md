@@ -15,6 +15,23 @@ Pipeline:
 
 ---
 
+---
+
+## Project Writeup
+
+**Full Report (Main Paper):**  
+    [Math498 Project Writeup (PDF)](docs/Writeup.pdf)
+
+This document contains the complete methodology, experiments, results, and analysis for this project, including:
+
+- BERT fine-tuning setup  
+- SAE-based feature decomposition  
+- Statistical feature importance analysis  
+- Cross-model interpretability results  
+- Qualitative feature interpretation  
+
+---
+
 ## Project Structure
 
 ```text
