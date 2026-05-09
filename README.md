@@ -19,18 +19,28 @@ Pipeline:
 
 ```text
 Math498-Project/
-├── Math498-project.pdf     # Final report of the project
-├── notebook.ipynb          # Main entry point
-├── main.py                 # CLI entry point
-├── model.py                # BERT model wrapper + SAE implementation
-├── trainer.py              # Training and evaluation logic
-├── config.py               # Configuration classes
-├── utils.py                # Utility functions
-├── data.py                 # Dataset loading and preprocessing
-├── analysis.py             # Statistical analysis
-├── outputs/                # Saved models (ignored by git)
-├── pyproject.toml          # Dependencies
-└── uv.lock                 # Locked dependency versions
+├── doc                     
+      ├── Writeup.pdf           # Final report of the project
+      ├── Math498-Project.zip   # Overleaf Project of the writeup
+├── notebook.ipynb              # Main entry point
+├── main.py                     # CLI entry point
+├── models                
+      ├── model.py              # BERT model wrapper + SAE implementation
+      ├── trainer.py            # Training and evaluation logic
+      ├── data.py               # Dataset loading and preprocessing
+├── State
+      ├── analysis.py           # Statistical analysis
+
+├── top_posts
+      ├── strong_features.json  # contains top 5 documents correspond to each strong features 
+      ├── weak_features.json    # contains top 5 documents correspond to each weak features 
+      ├── combine.pdf           # contains documents associate with strong and weak features, used to conduct the qualitative analysis.
+├── graphs                      # contains all the graphs generated while executing the entire pipeline
+├── config.py                   # Configuration classes
+├── utils.py                    # Utility functions
+├── outputs/                    # Saved models (ignored by git)
+├── pyproject.toml              # Dependencies
+└── uv.lock                     # Locked dependency versions
 ```
 
 ## Codebase Map
