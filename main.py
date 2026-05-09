@@ -102,7 +102,7 @@ class InterpBert:
         # print(self.trainer.model)
         print(self.model.model is self.trainer.model)
     
-    def get_model_prediction(self, num_samples = 5000) -> None:
+    def get_model_prediction(self, num_samples: int = 5000) -> None:
         """
         Generate BERT predictions on held-out examples.
 
@@ -136,7 +136,7 @@ class InterpBert:
     def overlap(self, a, b):
         return len(set(a.tolist()) & set(b.tolist()))
     
-    def compute_state(self, num_samples) -> None:
+    def compute_state(self, num_samples: int) -> None:
         """
         Run the statistical analysis: variance-based, t test, regression.
         Compute composite importance score.

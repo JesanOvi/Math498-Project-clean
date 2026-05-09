@@ -3,6 +3,17 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
 class Trainer:
+    """
+    Fine-tunes a BERT classifier and provides inference utilities.
+
+    Args:
+        model: HuggingFace BERT model for sequence classification
+        optimizer: PyTorch optimizer
+        device: computation device
+        datasetcon: dataset configuration (max length, tokenizer, etc.)
+        trainconfig: training configuration (batch size, tokenizer, etc.)
+    """
+
     def __init__(self, model, optimizer, device, datasetcon, trainconfig):
         self.model = model
         self.optimizer = optimizer
@@ -66,6 +77,15 @@ class Trainer:
         print("Confusion Matrix:\n", cm)
 
     def get_bert_predictions(self, texts):
+        """
+        Returns predicted class labels for a list of texts.
+
+        Args:
+            texts: list of raw text strings
+
+        Returns:
+            torch.Tensor of predicted class IDs
+        """
         preds = []
         self.model.eval()
         for i in range(0, len(texts), self.trainconfig.batch_size):
@@ -89,4 +109,4 @@ class Trainer:
 
         return torch.tensor(preds)
 
-    #Y = get_bert_predictions(texts)
+   
