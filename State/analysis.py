@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 import numpy as np
 from scipy.stats import f_oneway
 import json
+import seaborn as sns
 
 def get_feature_activations(sae, H_norm, device):
     sae.eval()
@@ -107,17 +108,7 @@ def combine_scores(variance: torch.Tensor, p_values: torch.Tensor, regression_we
     return score
 
 
-# def show_top_texts(feature_idx, Z, dataset, text_col, split="train", k=5):
-#     values = Z[:, feature_idx]
 
-#     top_indices = torch.topk(values, k=k).indices
-
-#     print(f"\n===== Feature {feature_idx} =====\n")
-
-#     for idx in top_indices:
-#         idx = int(idx)
-#         print(dataset[split][idx][text_col])
-#         print("---")
 
 def show_top_texts( output_file, feature_idx, Z, dataset, text_col, split="train", k=5):
 
