@@ -1,6 +1,7 @@
 import torch
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
+from torch.utils.data import DataLoader
 
 class Trainer:
     """
@@ -22,7 +23,7 @@ class Trainer:
         self.trainconfig = trainconfig
         self.losses = []
 
-    def train(self, loader, epochs):
+    def train(self, loader: DataLoader, epochs: int) -> None:
         self.model.train()
 
         for epoch in range(epochs):
@@ -58,7 +59,7 @@ class Trainer:
         #plt.show()
         plt.close()
 
-    def evaluate(self, loader):
+    def evaluate(self, loader: DataLoader) -> None:
         self.model.eval()
         preds, labels = [], []
 

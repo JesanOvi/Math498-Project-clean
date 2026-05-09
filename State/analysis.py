@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 import numpy as np
 from scipy.stats import f_oneway
 import json
-import seaborn as sns
+
 
 def get_feature_activations(sae, H_norm, device):
     sae.eval()
