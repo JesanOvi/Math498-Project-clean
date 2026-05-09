@@ -35,7 +35,7 @@ class InterpBert:
         self.Y = None
         self.Z = None
 
-    def set_dataconfig(self,file_path = "IMDBDataset.csv", file_type = "csv", text_column = "review", label_column = "sentiment", max_length = 128):
+    def set_dataconfig(self,file_path = "Dataset/IMDBDataset.csv", file_type = "csv", text_column = "review", label_column = "sentiment", max_length = 128):
         print("Using dataset from: ", file_path)
         self.datacon = DatasetConfig(file_path, file_type, text_column, label_column, max_length)
 
@@ -180,7 +180,7 @@ def build_parser():
 
     # Dataset config
     parser.add_argument("--data", type=str,
-                        default="IMDBDataset.csv")
+                        default="Dataset/IMDBDataset.csv")
 
     parser.add_argument("--text-col", type=str, default="review")
     parser.add_argument("--label-col", type=str, default="sentiment")
