@@ -135,7 +135,7 @@ def p_val_histogram(p_values):
     ax.set_title("Distribution of Feature Significance")
 
     plt.tight_layout()
-    plt.savefig("docs/pvalue_histogram.png", dpi=300)
+    plt.savefig("graphs/pvalue_histogram.png", dpi=300)
     #plt.show()
 
 def var_log_scatter(importance, reg_weights):
@@ -162,7 +162,7 @@ def var_log_scatter(importance, reg_weights):
     )
 
     plt.tight_layout()
-    plt.savefig("docs/variance_logistic_scatter.png", dpi=300)
+    plt.savefig("graphs/variance_logistic_scatter.png", dpi=300)
     #plt.show()
 
 def ranking_overlap(values):
@@ -182,5 +182,5 @@ def ranking_overlap(values):
 
     plt.xticks(rotation=15)
     plt.tight_layout()
-    plt.savefig("docs/ranking_overlap.png", dpi=300)
+    plt.savefig("graphs/ranking_overlap.png", dpi=300)
     #plt.show()
