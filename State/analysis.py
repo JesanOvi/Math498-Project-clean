@@ -4,6 +4,7 @@ from scipy.stats import ttest_ind
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 from scipy.stats import f_oneway
+import json
 
 def get_feature_activations(sae, H_norm, device):
     sae.eval()
@@ -123,6 +124,37 @@ def show_top_texts( output_file, feature_idx, Z, dataset, text_col, split="train
             f.write(dataset[split][idx][text_col])
             f.write("\n" + "-"*80 + "\n")
 
+
+
+def save_top_texts_json(output_file, feature_idx, Z, dataset, text_col, split="train", k=5):
+    values = Z[:, feature_idx]
+    top = torch.topk(values, k=k)
+
+    feature_data = {
+        "feature_id": int(feature_idx),
+        "examples": []
+    }
+
+    for rank, (idx, activation) in enumerate(zip(top.indices, top.values), 1):
+        idx = int(idx)
+
+        feature_data["examples"].append({
+            "rank": rank,
+            "dataset_index": idx,
+            "activation": float(activation),
+            "text": dataset[split][idx][text_col]
+        })
+
+    try:
+        with open(output_file, "r", encoding="utf-8") as f:
+            all_data = json.load(f)
+    except:
+        all_data = []
+
+    all_data.append(feature_data)
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(all_data, f, indent=2, ensure_ascii=False)
 
 def p_val_histogram(p_values):
     fig, ax = plt.subplots(figsize=(8,5))
