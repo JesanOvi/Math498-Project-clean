@@ -144,18 +144,32 @@ class InterpBert:
         top_features = get_top_features(score, k=10)
         print("Top Strong features:", top_features)
         self.dataset.set_format(type=None) 
-        print("Documents associated with each strong features are saved in strong_post.txt")
+        print("Documents associated with each strong features are saved in top_posts/strong_features.json")
         for f in top_features:
             #print(dataset["train"].column_names)
-            show_top_texts("strong_post.txt", f, self.Z, self.dataset, text_col=self.datacon.text_column)
+            #show_top_texts("strong_post.txt", f, self.Z, self.dataset, text_col=self.datacon.text_column)
+            save_top_texts_json(
+                "top_posts/strong_features.json",
+                f,
+                self.Z,
+                self.dataset,
+                text_col=self.datacon.text_column
+            )
 
         weak_features = get_bottom_features(score, 10)
         print("Weak Features", weak_features)
         self.dataset.set_format(type=None) 
-        print("Documents associated with each weak features are saved in weak_post.txt")
+        print("Documents associated with each weak features are saved in top_posts/weak_features.json")
         for f in weak_features:
             #print(dataset["train"].column_names)
-            show_top_texts("weak_post.txt", f, self.Z, self.dataset, text_col=self.datacon.text_column)
+            #show_top_texts("weak_post.txt", f, self.Z, self.dataset, text_col=self.datacon.text_column)
+            save_top_texts_json(
+                "top_posts/weak_features.json",
+                f,
+                self.Z,
+                self.dataset,
+                text_col=self.datacon.text_column
+            )
 
 
 
