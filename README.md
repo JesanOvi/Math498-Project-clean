@@ -146,7 +146,7 @@ Loads saved model + computes SAE feature statistics:
 ```bash
 uv run main.py --mode full
 ```
-Note: GitHub Repo doesn't contain the fine-tuned model (due to the model size). Directly execute uv run main.py --mode full will load null model. It is recommendated to fine-tune the model first (uv run main.py --mode train). If you want to download the fine-tune model follow the link. [fine-tunned BERT] (https://drive.google.com/drive/folders/1ZjG6-KnGj3rBFLWtit-1cdsWs2jH6Hqz?usp=sharing). Download the folder and copy-paste into main project folder. Expected path will be project_main_folder\outputs\models\bert.
+Note: GitHub Repo doesn't contain the fine-tuned model (due to the model size). Directly execute uv run main.py --mode full will load null model. It is recommendated to fine-tune the model first (uv run main.py --mode train). If you want to download the fine-tune model follow the link. [fine-tunned BERT](https://drive.google.com/drive/folders/1ZjG6-KnGj3rBFLWtit-1cdsWs2jH6Hqz?usp=sharing). Download the folder and copy-paste into main project folder. Expected path will be project_main_folder\outputs\models\bert.
 
 Specify sample size:
 ```bash
