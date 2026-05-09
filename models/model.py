@@ -22,72 +22,72 @@ class BERTClassifier(nn.Module):
 
 
 
-class GemmaScope(nn.Module):
-    def __init__(self, config):
-        self.config = config
-        self.gemma_tokenizer = None
-        self.gemma = None
-        self.sae = None
+# class GemmaScope(nn.Module):
+#     def __init__(self, config):
+#         self.config = config
+#         self.gemma_tokenizer = None
+#         self.gemma = None
+#         self.sae = None
     
-    def load_gemma(self):
-        self.gemma_tokenizer = AutoTokenizer.from_pretrained(self.config.gemma_name)
-        self.gemma = AutoModelForCausalLM.from_pretrained(
-            self.config.gemma_name,
-            torch_dtype=torch.float16 if self.config.device != "cpu" else torch.float32
-        ).to(self.config.device)
+#     def load_gemma(self):
+#         self.gemma_tokenizer = AutoTokenizer.from_pretrained(self.config.gemma_name)
+#         self.gemma = AutoModelForCausalLM.from_pretrained(
+#             self.config.gemma_name,
+#             torch_dtype=torch.float16 if self.config.device != "cpu" else torch.float32
+#         ).to(self.config.device)
 
-        self.gemma.eval()
+#         self.gemma.eval()
      
     
-    def load_gemmascope(self):
-        self.sae, cfg_dict, sparsity = SAE.from_pretrained(release=self.config.rel, sae_id=self.config.sae_id)
-        self.sae.to(self.config.device)
-        self.sae.eval()
+#     def load_gemmascope(self):
+#         self.sae, cfg_dict, sparsity = SAE.from_pretrained(release=self.config.rel, sae_id=self.config.sae_id)
+#         self.sae.to(self.config.device)
+#         self.sae.eval()
     
-    def get_gemma_residuals(self):
-        residuals = []
+#     def get_gemma_residuals(self):
+#         residuals = []
 
-        for i in range(0, len(self.config.texts), self.config.batch_size):
-            batch = self.config.texts[i:i+self.config.batch_size]
+#         for i in range(0, len(self.config.texts), self.config.batch_size):
+#             batch = self.config.texts[i:i+self.config.batch_size]
 
-            inputs = self.gemma_tokenizer(
-                batch,
-                return_tensors="pt",
-                truncation=True,
-                padding=True,
-                max_length=128
-            ).to(self.config.device)
+#             inputs = self.gemma_tokenizer(
+#                 batch,
+#                 return_tensors="pt",
+#                 truncation=True,
+#                 padding=True,
+#                 max_length=128
+#             ).to(self.config.device)
 
-            with torch.no_grad():
-                outputs = self.gemma(
-                    **inputs,
-                    output_hidden_states=True
-                )
+#             with torch.no_grad():
+#                 outputs = self.gemma(
+#                     **inputs,
+#                     output_hidden_states=True
+#                 )
 
-            h = outputs.hidden_states[20]
+#             h = outputs.hidden_states[20]
 
-            pooled = h.mean(dim=1)
+#             pooled = h.mean(dim=1)
 
-            residuals.append(pooled.cpu())
+#             residuals.append(pooled.cpu())
 
-        return torch.cat(residuals)
+#         return torch.cat(residuals)
     
-    def compute_sae_activation(self):
-        self.load_gemma()
-        self.load_gemmascope()
-        H = self.get_gemma_residuals()
-        with torch.no_grad():
-            Z = self.sae.encode(H.to(self.config.device)).cpu()
+#     def compute_sae_activation(self):
+#         self.load_gemma()
+#         self.load_gemmascope()
+#         H = self.get_gemma_residuals()
+#         with torch.no_grad():
+#             Z = self.sae.encode(H.to(self.config.device)).cpu()
 
-        return Z
+#         return Z
 
 #H = get_gemma_residuals(texts)
 
 
-import torch
-import torch.nn as nn
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from sae_lens import SAE
+# import torch
+# import torch.nn as nn
+# from transformers import AutoTokenizer, AutoModelForCausalLM
+# from sae_lens import SAE
 
 
 # class ModelWithSAE(nn.Module):

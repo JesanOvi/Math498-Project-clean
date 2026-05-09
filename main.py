@@ -18,6 +18,17 @@ import argparse
 import os
 
 class InterpBert:
+    """
+    End-to-end pipeline for cross-model interpretability analysis.
+
+    Responsibilities:
+        1. Fine-tune/load BERT sentiment classifier
+        2. Generate BERT predictions
+        3. Extract GPT-2 residual activations
+        4. Compute SAE features
+        5. Perform statistical feature analysis
+        6. Save qualitative inspection examples
+    """
     def __init__(self):
         self.device = get_device()
         self.datacon = None
@@ -91,7 +102,14 @@ class InterpBert:
         # print(self.trainer.model)
         print(self.model.model is self.trainer.model)
     
-    def get_model_prediction(self, num_samples = 5000):
+    def get_model_prediction(self, num_samples = 5000) -> None:
+        """
+        Generate BERT predictions on held-out examples.
+
+        Stores:
+            self.texts
+            self.Y
+        """
         self.dataset.set_format(type=None)  
         N = num_samples
         self.texts = self.dataset["test"][self.datacon.text_column][:N]
@@ -101,7 +119,13 @@ class InterpBert:
         self.Y = self.trainer.get_bert_predictions(self.texts)
         print("Model Predicted labels", self.Y)
     
-    def get_sae(self):
+    def get_sae(self) -> None:
+        """
+        Compute document-level SAE activations for same held-out examples,
+        used in get_model_prediction() method to find BERT prediction.
+        Stores:
+            self.Z
+        """
         saeobj = ModelWithSAE(self.saecon)
         self.Z = saeobj.compute_sae()
         print("Shape of SAE", self.Z.shape)
@@ -225,6 +249,15 @@ def build_parser():
 
 
 def configure_model(args):
+    """
+    Configure the interpretability pipeline from CLI arguments.
+
+    Args:
+        args: Parsed command-line arguments.
+
+    Returns:
+        Configured InterpretabilityPipeline instance.
+    """
     ob = InterpBert()
     ob.set_all_config()
 
