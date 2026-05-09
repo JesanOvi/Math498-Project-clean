@@ -1,14 +1,16 @@
 from utlis import *
 from config import *
-from data import *
-from model import *
-from trainer import *
+from models.data import *
+from models.model import *
+from models.trainer import *
 
 from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 from torch.optim import AdamW
 
-from analysis import *
+#from analysis import *
+
+from State.analysis import *
 
 from scipy.stats import spearmanr
 
